@@ -1,0 +1,16 @@
+#root {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+  }
+  
+  button {
+    min-height: 44px; /* Better touch targets */
+  }
+}

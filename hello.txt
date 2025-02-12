@@ -1,0 +1,95 @@
+Hello, jacquespotts.
+
+I have got those id and secretes.
+
+1.
+    SUPABASE_URL= https://uvsxosexezyafgfimklv.supabase.co#
+    SUPABASE_SERVICE_ROLE_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c3hvc2V4ZXp5YWZnZmlta2x2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMzQ2MDMyMywiZXhwIjoyMDQ5MDM2MzIzfQ.cqJ-e2ryOvV7LWDo5wLnryTvyLErqgZHVnjh9oXA0Sc
+    SUPABASE_ANON_KEY= eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV2c3hvc2V4ZXp5YWZnZmlta2x2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzM0NjAzMjMsImV4cCI6MjA0OTAzNjMyM30.gYaVNAMVc1hrZovdMEa8Xc9gIPZhb0QPUuRtoKCTIFk
+
+2.
+    QUICKBOOKS_CLIENT_ID= ABkla2Pkoa8k69zWVbdHeDMw7froZSCCzXy83hkiKgMQauDBrU
+    QUICKBOOKS_CLIENT_SECRET= rixqZU9aasM50Omk9Tskn0BPgfbPUy2295enJKf4
+
+3. 
+    SHOPIFY_CLIENT_ID=1fcc14f3e0991f95cea336afd91053bb
+    SHOPIFY_CLIENT_SECRET=ed748863e360ff2813be672ad630c059
+
+4.
+    SQUARE_CLIENT_ID= sandbox-sq0idb-LWr0_OunpNtYZMK7YTDXFw
+    SQUARE_CLIENT_SECRET= EAAAl1QxpDPyeabn7f-w0T8ptuV02nEcX1yumvcvBWLwWO1JQpVEm7M3mmAU4UgI
+
+4.
+    XERO_CLIENT_ID=9E0A8A10C4A04834B5FBBBE5F5C36615
+    XERO_CLIENT_SECRET=iO597PNr73Oi9CiU5YvycXdO8G0uBFoVGt3P6Ct4Yc2tn2bQ
+
+5.
+    GOOGLE_BUSINESS_CLIENT_ID= 451729663823-2tudk25bgnvuh560qe47auckhfq0bp6m.apps.googleusercontent.com
+    GOOGLE_BUSINESS_CLIENT_SECRET= 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
+
+6.
+    RESEND_API_KEY= re_hM6rE91G_GF3wj3eWSvLwAZfvCvaKPAie
+
+7.
+    STRIPE_SECRET_KEY=sk_test_51OQBiWIHoIMM5DdU1utEYQkdD6Ca9ZETR2rrRxfkQVnOWOqOVn0p7Hg8z9xV0xdZoNZAoOw4zHoVIEctDHdr1LWQ00Yw6YVHII
+
+8.
+    PLAID_CLIENT_ID=67a0581dbb048c001e1beedc
+    PLAID_SANDBOX_SECRET=33990dbf3e17b550850bd302285ac8
+
+9.
+    EXPERIAN_CLIENT_ID= nAi3WVTD1L2B6ejVcrHYuUYwA0WXw3NK
+    EXPERIAN_CLIENT_SECRET=j1FsWQH6iRp0a2n8
+
+
+
+
+You need to contact with some service provider for some api key. 
+
+1. You need to talk customer care "https://developers.adp.com"
+    ADP_CLIENT_ID= 
+    ADP_CLIENT_SECRET=
+
+2. You need to talk customer care "https://www.thryv.com"
+    THRYV_CLIENT_ID=
+    THRYV_CLIENT_SECRET=
+
+3. You need to talk customer care "https://developer.dnb.com/#/home"
+    DNB_CLIENT_ID=
+    DNB_CLIENT_SECRET=
+
+4. You need to talk customer care 
+    GUSTO_CLIENT_ID=
+    GUSTO_CLIENT_SECRET=
+
+5. You need to talk customer care "https://www.irs.gov/e-file-providers/application-to-participate-in-the-information-returns-ides-program"
+    IRS_CLIENT_ID=
+    IRS_CLIENT_SECRET=
+
+
+Need access business mail verification and talk with customer care. "https://www.middesk.com/contact-sales"
+1. 
+    MIDDESK_API_KEY=
+    MIDDESK_API_SECRET=
+
+
+Researching for other api key and secrates. 
+
+1.
+    AVALARA_CLIENT_ID=
+    AVALARA_CLIENT_SECRET=
+2.
+    CREDITSAFE_CLIENT_ID=
+    CREDITSAFE_CLIENT_SECRET=
+    CREDITSAFE_USERNAME=
+    CREDITSAFE_PASSWORD=
+3.
+    YELP_CLIENT_ID=
+    YELP_CLIENT_SECRET=
+
+
+
+I am thinking that, you need 1-2 days for getting rest of the api keys.After getting all the keys we will be able to test the total system that is properly working or not. So, I am sending a 7 days extension so that we can finish the order nicely.  
+
+BUSINESS_MAIL= confidential@bestbodyfast.com
+1. SITE_URL=

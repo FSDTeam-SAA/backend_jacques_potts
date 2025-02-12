@@ -1,0 +1,74 @@
+import React, { useState } from 'react';
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+interface VirtualTourViewerProps {
+  images: string[];
+  initialIndex?: number;
+}
+
+const VirtualTourViewer = ({ images, initialIndex = 0 }: VirtualTourViewerProps) => {
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  };
+
+  const goToPrevious = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  if (!images.length) {
+    return (
+      <div className="w-full h-[400px] flex items-center justify-center text-muted-foreground rounded-lg border">
+        No tour images available
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full h-[400px] group">
+      <img
+        src={images[currentIndex]}
+        alt={`Tour view ${currentIndex + 1}`}
+        className="w-full h-full object-cover rounded-lg"
+      />
+      
+      {images.length > 1 && (
+        <>
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={goToPrevious}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+            onClick={goToNext}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                className={`w-2 h-2 rounded-full transition-colors ${
+                  index === currentIndex ? 'bg-primary' : 'bg-muted'
+                }`}
+                onClick={() => setCurrentIndex(index)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+export default VirtualTourViewer;
