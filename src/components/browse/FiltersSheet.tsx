@@ -1,11 +1,17 @@
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Filter, Lock } from "lucide-react";
 import BasicFilters from "@/components/business/BasicFilters";
 import DynamicFilters from "@/components/business/DynamicFilters";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { usePremiumFeatures } from "@/contexts/PremiumFeaturesContext";
 import { useFeaturePayment } from "@/hooks/useFeaturePayment";
+import { Filter, Lock } from "lucide-react";
 
 interface FiltersSheetProps {
   filters: any;
@@ -14,10 +20,17 @@ interface FiltersSheetProps {
   setShowPaymentDialog: (show: boolean) => void;
 }
 
-const FiltersSheet = ({ filters, onFilterChange, onFilterReset, setShowPaymentDialog }: FiltersSheetProps) => {
+const FiltersSheet = ({
+  filters,
+  onFilterChange,
+  onFilterReset,
+  setShowPaymentDialog,
+}: FiltersSheetProps) => {
   const { features } = usePremiumFeatures();
   const { isProcessing } = useFeaturePayment();
-  const isDynamicActive = features.find(f => f.type === "dynamic_filters")?.isActive;
+  const isDynamicActive = features.find(
+    (f) => f.type === "dynamic_filters"
+  )?.isActive;
 
   return (
     <Sheet>
@@ -32,11 +45,11 @@ const FiltersSheet = ({ filters, onFilterChange, onFilterReset, setShowPaymentDi
           <SheetTitle>Filter Businesses</SheetTitle>
           <SheetDescription>
             <div className="space-y-6">
-              <BasicFilters 
+              <BasicFilters
                 onFilterChange={onFilterChange}
                 onReset={onFilterReset}
               />
-              
+
               {!isDynamicActive && (
                 <div className="bg-muted p-4 rounded-lg">
                   <div className="flex items-center gap-2 mb-2">
@@ -46,18 +59,20 @@ const FiltersSheet = ({ filters, onFilterChange, onFilterReset, setShowPaymentDi
                   <p className="text-sm text-muted-foreground mb-4">
                     Purchase dynamic filters to access advanced search options.
                   </p>
-                  <Button 
+                  <Button
                     onClick={() => setShowPaymentDialog(true)}
                     className="w-full bg-[#1a365d] hover:bg-[#2a4a7d]"
                     disabled={isProcessing}
                   >
-                    {isProcessing ? "Processing..." : "Unlock Dynamic Filters ($1 for 1 hour)"}
+                    {isProcessing
+                      ? "Processing..."
+                      : "Unlock Dynamic Filters ($1 for 1 hour)"}
                   </Button>
                 </div>
               )}
-              
+
               {isDynamicActive && (
-                <DynamicFilters 
+                <DynamicFilters
                   onFilterChange={onFilterChange}
                   onReset={onFilterReset}
                 />

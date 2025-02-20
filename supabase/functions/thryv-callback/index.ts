@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -20,7 +21,10 @@ serve(async (req) => {
       throw new Error("Missing required parameters");
     }
 
-    console.log("Received Thryv callback with code and state:", { code, state });
+    console.log("Received Thryv callback with code and state:", {
+      code,
+      state,
+    });
 
     const thryvClientId = Deno.env.get("THRYV_CLIENT_ID");
     const thryvClientSecret = Deno.env.get("THRYV_CLIENT_SECRET");
@@ -36,7 +40,9 @@ serve(async (req) => {
         client_secret: thryvClientSecret,
         code: code,
         grant_type: "authorization_code",
-        redirect_uri: `${Deno.env.get("SUPABASE_URL")}/functions/v1/thryv-callback`,
+        redirect_uri: `${Deno.env.get(
+          "SUPABASE_URL"
+        )}/functions/v1/thryv-callback`,
       }),
     });
 
@@ -50,20 +56,21 @@ serve(async (req) => {
     );
 
     // Store the integration data
-    const { data: integrationData, error: integrationError } = await supabaseClient
-      .from("business_integrations")
-      .insert({
-        integration_type: "thryv",
-        credentials: {
-          access_token: tokenData.access_token,
-          refresh_token: tokenData.refresh_token,
-          expires_in: tokenData.expires_in,
-        },
-        status: "verified",
-        verified_at: new Date().toISOString(),
-      })
-      .select()
-      .single();
+    const { data: integrationData, error: integrationError } =
+      await supabaseClient
+        .from("business_integrations")
+        .insert({
+          integration_type: "thryv",
+          credentials: {
+            access_token: tokenData.access_token,
+            refresh_token: tokenData.refresh_token,
+            expires_in: tokenData.expires_in,
+          },
+          status: "verified",
+          verified_at: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
     if (integrationError) {
       console.error("Error storing integration:", integrationError);
@@ -77,17 +84,16 @@ serve(async (req) => {
       status: 302,
       headers: {
         ...corsHeaders,
-        Location: `${Deno.env.get("SUPABASE_URL")}/sell?integration=thryv&status=success`,
+        Location: `${Deno.env.get(
+          "SUPABASE_URL"
+        )}/sell?integration=thryv&status=success`,
       },
     });
   } catch (error) {
     console.error("Error in Thryv callback:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

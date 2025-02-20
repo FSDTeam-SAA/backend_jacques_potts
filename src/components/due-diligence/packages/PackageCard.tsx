@@ -21,6 +21,8 @@ export default function PackageCard({ pkg }: PackageCardProps) {
   const navigate = useNavigate();
 
   const handlePurchase = async () => {
+
+    console.log("User", user, "Package", pkg,"Working");
     if (!user) {
       toast.error("Please log in to purchase a due diligence package");
       navigate("/login");
@@ -46,6 +48,7 @@ export default function PackageCard({ pkg }: PackageCardProps) {
 
   return (
     <Card className="flex flex-col">
+      {/* <p>asdlfhsadlkfasdlklsdkljasdfkljsadkjl; ;kasdflsad</p> */}
       <CardHeader>
         <CardTitle>{pkg.name}</CardTitle>
       </CardHeader>

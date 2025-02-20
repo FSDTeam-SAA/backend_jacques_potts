@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -24,21 +25,26 @@ serve(async (req) => {
     const clientId = Deno.env.get("QUICKBOOKS_CLIENT_ID");
     console.log(clientId);
     const clientSecret = Deno.env.get("QUICKBOOKS_CLIENT_SECRET");
-    const redirectUri = `${Deno.env.get("SUPABASE_URL")}/functions/v1/quickbooks-callback`;
+    const redirectUri = `${Deno.env.get(
+      "SUPABASE_URL"
+    )}/functions/v1/quickbooks-callback`;
 
     // Exchange the authorization code for tokens
-    const tokenResponse = await fetch("https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: redirectUri,
-      }),
-    });
+    const tokenResponse = await fetch(
+      "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: redirectUri,
+        }),
+      }
+    );
 
     if (!tokenResponse.ok) {
       throw new Error("Failed to exchange authorization code for tokens");
@@ -74,15 +80,11 @@ serve(async (req) => {
       },
       status: 302,
     });
-
   } catch (error) {
     console.error("QuickBooks callback error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });

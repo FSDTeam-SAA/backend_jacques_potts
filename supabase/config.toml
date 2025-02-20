@@ -6,7 +6,7 @@ port = 54321
 schemas = ["public", "storage", "graphql_public"]
 
 [db]
-port = 54322
+port = 54330  # Choose a higher port number
 
 [studio]
 enabled = true
@@ -17,3 +17,4 @@ enabled = true
 
 [auth]
 enabled = true
+

@@ -1,11 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
-console.log(Deno.env.get("QUICKBOOKS_CLIENT_ID"))
+console.log(Deno.env.get("QUICKBOOKS_CLIENT_ID"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -19,7 +20,10 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser(
       req.headers.get("Authorization")?.split(" ")[1] ?? ""
     );
 
@@ -31,10 +35,10 @@ serve(async (req) => {
 
     // Get the integration credentials
     const { data: integration, error: integrationError } = await supabaseClient
-      .from('business_integrations')
-      .select('*')
-      .eq('business_id', business_id)
-      .eq('integration_type', 'quickbooks')
+      .from("business_integrations")
+      .select("*")
+      .eq("business_id", business_id)
+      .eq("integration_type", "quickbooks")
       .single();
 
     if (integrationError || !integration) {
@@ -43,36 +47,45 @@ serve(async (req) => {
 
     // Refresh token if needed
     if (new Date(integration.credentials.expires_at) < new Date()) {
-      const refreshResponse = await fetch("https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          Authorization: `Basic ${btoa(`${Deno.env.get("QUICKBOOKS_CLIENT_ID")}:${Deno.env.get("QUICKBOOKS_CLIENT_SECRET")}`)}`,
-        },
-        body: new URLSearchParams({
-          grant_type: "refresh_token",
-          refresh_token: integration.credentials.refresh_token,
-        }),
-      });
+      const refreshResponse = await fetch(
+        "https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization: `Basic ${btoa(
+              `${Deno.env.get("QUICKBOOKS_CLIENT_ID")}:${Deno.env.get(
+                "QUICKBOOKS_CLIENT_SECRET"
+              )}`
+            )}`,
+          },
+          body: new URLSearchParams({
+            grant_type: "refresh_token",
+            refresh_token: integration.credentials.refresh_token,
+          }),
+        }
+      );
 
       if (!refreshResponse.ok) {
         throw new Error("Failed to refresh token");
       }
 
       const tokens = await refreshResponse.json();
-      
+
       // Update stored credentials
       await supabaseClient
-        .from('business_integrations')
+        .from("business_integrations")
         .update({
           credentials: {
             ...integration.credentials,
             access_token: tokens.access_token,
             refresh_token: tokens.refresh_token,
-            expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+            expires_at: new Date(
+              Date.now() + tokens.expires_in * 1000
+            ).toISOString(),
           },
         })
-        .eq('id', integration.id);
+        .eq("id", integration.id);
     }
 
     // Fetch financial data from QuickBooks
@@ -95,15 +108,15 @@ serve(async (req) => {
 
     // Update the business listing with verified data
     const { error: updateError } = await supabaseClient
-      .from('business_listings')
+      .from("business_listings")
       .update({
         api_verified_data: {
-          source: 'quickbooks',
+          source: "quickbooks",
           last_updated: new Date().toISOString(),
           profit_and_loss: financialData,
         },
       })
-      .eq('id', business_id);
+      .eq("id", business_id);
 
     if (updateError) {
       throw updateError;
@@ -116,15 +129,11 @@ serve(async (req) => {
         status: 200,
       }
     );
-
   } catch (error) {
     console.error("QuickBooks data fetch error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });

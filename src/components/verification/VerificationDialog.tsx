@@ -10,17 +10,41 @@ import {
 } from "@/components/ui/dialog";
 import { useFeaturePayment } from "@/hooks/useFeaturePayment";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const VerificationDialog = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { purchaseFeature, isProcessing } = useFeaturePayment();
+  const { purchaseFeature, isProcessing,  } = useFeaturePayment();
 
   const handleVerification = async () => {
-    const success = await purchaseFeature("verification");
-    if (success) {
-      setIsOpen(false);
+
+     try {
+      const response = await supabase.functions.invoke(
+        "create-checkout-session",
+        {
+          body: { featureType: "setup_intent" },
+        }
+      );
+
+      // console.log("response", response);
+
+      if (response.error) throw response.error;
+      if (!response.data?.url) throw new Error("No checkout URL received");
+
+  
+      const success = await purchaseFeature("verification");
+      if (success) {
+        setIsOpen(false);
+      }
+      window.location.href = response.data.url;
+    } catch (error) {
+      console.error("Error setting up payment method:", error);
+      toast.error("Failed to set up payment method");
     }
   };
+
+  // console.log("isOpen",isOpen, "setIsOpen",setIsOpen, "i am from verification dialog");
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

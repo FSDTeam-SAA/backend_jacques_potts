@@ -89,9 +89,9 @@ const RealEstateListingsGrid = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Real Estate Listings</h2>
-        <Button onClick={() => navigate("/real-estate/create")}>
+        <Button onClick={() => navigate("/sell")}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Property
+          Add Property 
         </Button>
       </div>
 
@@ -111,7 +111,7 @@ const RealEstateListingsGrid = () => {
           </p>
           <Button
             className="mt-4"
-            onClick={() => navigate("/real-estate/create")}
+            onClick={() => navigate("/sell")}
           >
             Add Property
           </Button>

@@ -9,7 +9,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    debug: true // Keep debug mode to help troubleshoot
+    debug: true 
   },
   global: {
     headers: {

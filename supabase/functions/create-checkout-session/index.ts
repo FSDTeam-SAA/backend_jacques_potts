@@ -1,51 +1,55 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from 'https://esm.sh/stripe@14.21.0';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import Stripe from "https://esm.sh/stripe@14.21.0";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
   // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     // Initialize Stripe with better error handling
-    const stripeKey = Deno.env.get('STRIPE_SECRET_KEY');
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) {
-      console.error('STRIPE_SECRET_KEY is not set in environment variables');
-      throw new Error('Stripe configuration error');
+      console.error("STRIPE_SECRET_KEY is not set in environment variables");
+      throw new Error("Stripe configuration error");
     }
 
     // Initialize Stripe
     const stripe = new Stripe(stripeKey, {
-      apiVersion: '2023-10-16',
+      apiVersion: "2023-10-16",
     });
 
     // Create Supabase client
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_ANON_KEY") ?? ""
     );
 
     // Get the authorization header
-    const authHeader = req.headers.get('Authorization');
+    const authHeader = req.headers.get("Authorization");
     if (!authHeader) {
-      throw new Error('No authorization header');
+      throw new Error("No authorization header");
     }
 
     // Get the JWT token
-    const token = authHeader.replace('Bearer ', '');
-    
+    const token = authHeader.replace("Bearer ", "");
+
     // Get the user from the token
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: userError,
+    } = await supabaseClient.auth.getUser(token);
+
     if (userError || !user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     // Get the request body
@@ -67,42 +71,42 @@ serve(async (req) => {
     }
 
     // Set up the session based on feature type
-    if (featureType === 'setup_intent') {
+    if (featureType === "setup_intent") {
       // Setup intent for adding a payment method
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
-        payment_method_types: ['card'],
-        mode: 'setup',
-        success_url: `${req.headers.get('origin')}/profile?setup=success`,
-        cancel_url: `${req.headers.get('origin')}/profile`,
+        payment_method_types: ["card"],
+        mode: "setup",
+        success_url: `${req.headers.get("origin")}/profile?setup=success`,
+        cancel_url: `${req.headers.get("origin")}/profile`,
       });
 
-      return new Response(
-        JSON.stringify({ url: session.url }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ url: session.url }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Handle show_more_info payment
-    if (featureType === 'show_more_info') {
+    if (featureType === "show_more_info") {
       const session = await stripe.checkout.sessions.create({
         customer: customerId,
         line_items: [
           {
             price_data: {
-              currency: 'usd',
+              currency: "usd",
               product_data: {
-                name: 'Additional Business Information',
-                description: 'Access to detailed business metrics and information',
+                name: "Additional Business Information",
+                description:
+                  "Access to detailed business metrics and information",
               },
               unit_amount: 500, // $5.00
             },
             quantity: 1,
           },
         ],
-        mode: 'payment',
-        success_url: `${req.headers.get('origin')}/browse?purchase=success`,
-        cancel_url: `${req.headers.get('origin')}/browse`,
+        mode: "payment",
+        success_url: `${req.headers.get("origin")}/browse?purchase=success`,
+        cancel_url: `${req.headers.get("origin")}/browse`,
         metadata: {
           user_id: user.id,
           feature_type: featureType,
@@ -110,22 +114,22 @@ serve(async (req) => {
         },
       });
 
-      return new Response(
-        JSON.stringify({ url: session.url }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ url: session.url }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    throw new Error('Invalid feature type');
+    throw new Error("Invalid feature type");
   } catch (error) {
-    console.error('Error in create-checkout-session:', error);
+    console.error("Error in create-checkout-session:", error);
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         error: error.message,
-        details: 'Please ensure all required configuration is set up correctly.'
+        details:
+          "Please ensure all required configuration is set up correctly.",
       }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 500,
       }
     );

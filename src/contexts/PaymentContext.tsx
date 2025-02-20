@@ -1,29 +1,31 @@
 import React, { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
 
-interface CardDetails {
-  lastFour: string;
-  expiryMonth: string;
-  expiryYear: string;
-  brand: string;
-}
+// interface CardDetails {
+//   lastFour: string;
+//   expiryMonth: string;
+//   expiryYear: string;
+//   brand: string;
+// }
 
 interface PaymentContextType {
-  savedCard: CardDetails | null;
-  setSavedCard: (card: CardDetails | null) => void;
+  // savedCard: CardDetails | null;
+  // setSavedCard: (card: CardDetails | null) => void;
   processPayment: (amount: number, description: string) => Promise<boolean>;
 }
 
 const PaymentContext = createContext<PaymentContextType | undefined>(undefined);
 
 export const PaymentProvider = ({ children }: { children: React.ReactNode }) => {
-  const [savedCard, setSavedCard] = useState<CardDetails | null>(null);
+  // const [savedCard, setSavedCard] = useState<CardDetails | null>(null);
+
 
   const processPayment = async (amount: number, description: string): Promise<boolean> => {
-    if (!savedCard) {
-      toast.error("Please add a payment method in billing settings");
-      return false;
-    }
+
+    // if (!savedCard) {
+    //   toast.error("Please add a payment method in billing settings");
+    //   return false;
+    // }
 
     try {
       // Simulated payment processing
@@ -37,7 +39,7 @@ export const PaymentProvider = ({ children }: { children: React.ReactNode }) => 
   };
 
   return (
-    <PaymentContext.Provider value={{ savedCard, setSavedCard, processPayment }}>
+    <PaymentContext.Provider value={{ processPayment }}>
       {children}
     </PaymentContext.Provider>
   );

@@ -8,22 +8,30 @@ export const useFeaturePayment = () => {
   const { processPayment } = usePayment();
   const { activateFeature } = usePremiumFeatures();
 
-  const purchaseFeature = async (
-    type: "dynamic_filters" | "priority_message" | "loi_submission" | "verification",
-    duration?: number
-  ) => {
-    setIsProcessing(true);
-    try {
-      const amount = type === "verification" 
-        ? 25 
-        : type === "loi_submission" 
-        ? 20 
-        : type === "priority_message" 
-        ? 2 
-        : 1;
+  console.log("useFeaturePayment");
 
-      const success = await processPayment(amount, `${type.replace("_", " ")} purchase`);
-      
+
+
+  const purchaseFeature = async (type:| "dynamic_filters"| "priority_message" | "loi_submission"| "verification",duration?: number) => {
+
+    // console.log("purchaseFeature", type, duration);
+
+      setIsProcessing(true);
+    try {
+      const amount =
+        type === "verification"
+          ? 25
+          : type === "loi_submission"
+          ? 20
+          : type === "priority_message"
+          ? 2
+          : 1;
+
+      const success = await processPayment(
+        amount,
+        `${type.replace("_", " ")} purchase`
+      );
+
       if (success) {
         await activateFeature(type, duration);
         return true;

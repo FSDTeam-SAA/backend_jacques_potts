@@ -1,11 +1,10 @@
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { Filter, Lock } from "lucide-react";
 import BasicFilters from "@/components/business/BasicFilters";
 import DynamicFilters from "@/components/business/DynamicFilters";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { usePremiumFeatures } from "@/contexts/PremiumFeaturesContext";
 import { useFeaturePayment } from "@/hooks/useFeaturePayment";
+import { Filter, Lock } from "lucide-react";
 
 interface FiltersSheetProps {
   filters: any;
@@ -16,7 +15,7 @@ interface FiltersSheetProps {
 
 const FiltersSheet = ({ filters, onFilterChange, onFilterReset, setShowPaymentDialog }: FiltersSheetProps) => {
   const { features } = usePremiumFeatures();
-  const { isProcessing } = useFeaturePayment();
+  const { isProcessing, purchaseFeature } = useFeaturePayment();
   const isDynamicActive = features.find(f => f.type === "dynamic_filters")?.isActive;
 
   return (

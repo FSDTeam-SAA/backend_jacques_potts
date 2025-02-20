@@ -3,7 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
@@ -41,18 +42,27 @@ serve(async (req) => {
     }
 
     // Exchange the code for tokens
-    const tokenResponse = await fetch("https://identity.xero.com/connect/token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${btoa(`${Deno.env.get("XERO_CLIENT_ID")}:${Deno.env.get("XERO_CLIENT_SECRET")}`)}`,
-      },
-      body: new URLSearchParams({
-        grant_type: "authorization_code",
-        code,
-        redirect_uri: `${Deno.env.get("SUPABASE_URL")}/functions/v1/xero-callback`,
-      }),
-    });
+    const tokenResponse = await fetch(
+      "https://identity.xero.com/connect/token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Basic ${btoa(
+            `${Deno.env.get("XERO_CLIENT_ID")}:${Deno.env.get(
+              "XERO_CLIENT_SECRET"
+            )}`
+          )}`,
+        },
+        body: new URLSearchParams({
+          grant_type: "authorization_code",
+          code,
+          redirect_uri: `${Deno.env.get(
+            "SUPABASE_URL"
+          )}/functions/v1/xero-callback`,
+        }),
+      }
+    );
 
     if (!tokenResponse.ok) {
       throw new Error("Failed to exchange code for tokens");
@@ -81,25 +91,20 @@ serve(async (req) => {
     }
 
     // Redirect back to the application
-    return new Response(
-      null,
-      {
-        headers: {
-          ...corsHeaders,
-          "Location": `${Deno.env.get("SITE_URL")}/sell?integration=xero&status=success`,
-        },
-        status: 302,
-      }
-    );
-
+    return new Response(null, {
+      headers: {
+        ...corsHeaders,
+        Location: `${Deno.env.get(
+          "SITE_URL"
+        )}/sell?integration=xero&status=success`,
+      },
+      status: 302,
+    });
   } catch (error) {
     console.error("Callback error:", error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 400,
+    });
   }
 });
