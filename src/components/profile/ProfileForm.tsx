@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -9,24 +8,16 @@ import BillingSection from "./BillingSection";
 import TwoFactorAuth from "./TwoFactorAuth";
 import { VerificationDialog } from "@/components/verification/VerificationDialog";
 
+// Import usePremiumFeatures hook to access the context
+import { usePremiumFeatures } from "@/contexts/PremiumFeaturesContext"; 
+
 export const ProfileForm = () => {
   const { user } = useAuth();
+  
+  // Accessing isVerified directly from context
+  const { isVerified, features } = usePremiumFeatures();
 
-  const { data: profile } = useQuery({
-    queryKey: ["profile", user?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: !!user?.id,
-  });
-
+  // Optional: You can still use useQuery for other data like verifiedBusinesses if needed
   const { data: verifiedBusinesses } = useQuery({
     queryKey: ["verified-businesses", user?.id],
     queryFn: async () => {
@@ -51,7 +42,8 @@ export const ProfileForm = () => {
             Manage your account settings and preferences
           </p>
         </div>
-        {!profile?.is_verified && <VerificationDialog />}
+        {/* Conditional rendering based on isVerified from context */}
+        {!isVerified && <VerificationDialog />}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -67,13 +59,14 @@ export const ProfileForm = () => {
           <CardContent>
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Badge variant={profile?.is_verified ? "default" : "secondary"} className="flex items-center gap-1">
+                {/* Conditional rendering based on isVerified from context */}
+                <Badge variant={isVerified ? "default" : "secondary"} className="flex items-center gap-1">
                   <BadgeCheck className="w-4 h-4" />
-                  {profile?.is_verified ? "Verified Seller" : "Not Verified"}
+                  {isVerified ? "Verified Seller" : "Not Verified"}
                 </Badge>
-                {profile?.verification_date && (
+                {user?.verification_date && (
                   <span className="text-sm text-muted-foreground">
-                    Since {new Date(profile.verification_date).toLocaleDateString()}
+                    Since {new Date(user?.verification_date).toLocaleDateString()}
                   </span>
                 )}
               </div>

@@ -21,6 +21,7 @@ export const PremiumFeaturesProvider = ({ children }: { children: React.ReactNod
 
   const refreshFeatures = async () => {
     if (!user) return;
+    console.log("User ID===================================:", user.id);  // Log the user ID to ensure it's correct
 
     try {
       const { data: profile } = await supabase
@@ -30,13 +31,20 @@ export const PremiumFeaturesProvider = ({ children }: { children: React.ReactNod
         .single();
 
       setIsVerified(profile?.is_verified || false);
+      console.log("Is_verified=========================================",profile?.is_verified);  // Log the verification status
 
-      const { data: activeFeatures } = await supabase
-        .from("premium_feature_usage")
-        .select("*")
-        .eq("user_id", user.id)
-        .eq("payment_status", "completed")
-        .gte("expires_at", new Date().toISOString());
+      const { data: activeFeatures, error } = await supabase
+  .from("premium_feature_usage")
+  .select("*")
+  .eq("user_id", user.id)
+  .eq("payment_status", "completed")
+  .gte("expires_at", new Date().toISOString());
+
+if (error) {
+  console.error("Error retrieving active features:======================", error);
+} else {
+  console.log("Active Features Data:==================================", activeFeatures);
+}
 
       const formattedFeatures: PremiumFeature[] = [
         "dynamic_filters",

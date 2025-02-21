@@ -20,7 +20,7 @@ export const useFeaturePayment = () => {
     try {
       const amount =
         type === "verification"
-          ? 25
+          ? 100
           : type === "loi_submission"
           ? 20
           : type === "priority_message"

@@ -20,24 +20,51 @@ export const PaymentProvider = ({ children }: { children: React.ReactNode }) => 
   // const [savedCard, setSavedCard] = useState<CardDetails | null>(null);
 
 
+  // const processPayment = async (amount: number, description: string): Promise<boolean> => {
+
+  //   // if (!savedCard) {
+  //   //   toast.error("Please add a payment method in billing settings");
+  //   //   return false;
+  //   // }
+  //   console.log("This is the amount -------------------------------",amount)
+  //   try {
+  //     // Simulated payment processing
+  //     await new Promise(resolve => setTimeout(resolve, 1000));
+  //     toast.success(`Payment of $${amount} processed successfully`);
+  //     return true;
+  //   } catch (error) {
+  //     toast.error("Payment failed. Please try again.");
+  //     return false;
+  //   }
+
+  // };
+ 
   const processPayment = async (amount: number, description: string): Promise<boolean> => {
-
-    // if (!savedCard) {
-    //   toast.error("Please add a payment method in billing settings");
-    //   return false;
-    // }
-
     try {
-      // Simulated payment processing
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast.success(`Payment of $${amount} processed successfully`);
+      // Here, you'd call your backend to create the Stripe checkout session
+      const response = await fetch("/api/create-stripe-session", {
+        method: "POST",
+        body: JSON.stringify({
+          amount,
+          description,
+        }),
+      });
+  
+      const session = await response.json();
+  
+      if (session.error) {
+        throw new Error(session.error);
+      }
+  
+      // Redirect to the Stripe checkout page
+      window.location.href = session.url; // This will send the user to Stripe's checkout page
       return true;
     } catch (error) {
       toast.error("Payment failed. Please try again.");
       return false;
     }
   };
-
+  
   return (
     <PaymentContext.Provider value={{ processPayment }}>
       {children}
