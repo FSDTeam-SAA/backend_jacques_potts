@@ -61,6 +61,8 @@ function App() {
     };
   }, []);
 
+  console.log("App rendered");
+
   return (
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>

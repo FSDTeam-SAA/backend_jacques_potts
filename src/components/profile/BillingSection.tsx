@@ -19,28 +19,58 @@ const BillingSection = () => {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
+  // const { data: transactions = [] } = useQuery({
+  //   queryKey: ["transactions", user?.id],
+  //   queryFn: async () => {
+  //     const { data, error } = await supabase
+  //       .from("premium_feature_usage")
+  //       .select("*")
+  //       .eq("user_id", user?.id)
+  //       .order("created_at", { ascending: false });
+
+  //     if (error) throw error;
+
+  //     return data.map((t): Transaction => ({
+  //       id: t.id,
+  //       date: t.created_at,
+  //       amount: t.payment_amount,
+  //       description: `${t.feature_type.replace(/_/g, ' ')} ${t.expires_at ? '(1 hour)' : ''}`,
+  //       status: t.payment_status,
+  //     }));
+  //   },
+  //   enabled: !!user,
+  // });
+
   const { data: transactions = [] } = useQuery({
     queryKey: ["transactions", user?.id],
     queryFn: async () => {
+      console.log("Fetching transactions for user_________:", user?.id);
+      
       const { data, error } = await supabase
         .from("premium_feature_usage")
         .select("*")
         .eq("user_id", user?.id)
         .order("created_at", { ascending: false });
-
-      if (error) throw error;
-
-      return data.map((t): Transaction => ({
+  
+      if (error) {
+        console.error("Supabase Error:", error);
+        throw error;
+      }
+  
+      console.log("Fetched transactions__________________________:", data);
+  
+      return data.map((t) => ({
         id: t.id,
         date: t.created_at,
         amount: t.payment_amount,
-        description: `${t.feature_type.replace(/_/g, ' ')} ${t.expires_at ? '(1 hour)' : ''}`,
+        description: `${t.feature_type?.replace(/_/g, ' ') ?? "Unknown Feature"} ${t.expires_at ? '(1 hour)' : ''}`,
         status: t.payment_status,
       }));
     },
     enabled: !!user,
   });
 
+  
   const handleAddPaymentMethod = async () => {
     setIsLoading(true);
     try {

@@ -27,6 +27,10 @@ const FiltersSheet = ({
   setShowPaymentDialog,
 }: FiltersSheetProps) => {
   const { features } = usePremiumFeatures();
+
+
+  // console.log("features", features);
+
   const { isProcessing } = useFeaturePayment();
   const isDynamicActive = features.find(
     (f) => f.type === "dynamic_filters"
@@ -48,7 +52,7 @@ const FiltersSheet = ({
               <BasicFilters
                 onFilterChange={onFilterChange}
                 onReset={onFilterReset}
-              />
+              />  
 
               {!isDynamicActive && (
                 <div className="bg-muted p-4 rounded-lg">

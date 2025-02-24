@@ -30,7 +30,7 @@ export function PaymentMethodCheck({
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  // console.log("externalIsOpen",externalIsOpen, "externalSetIsOpen",externalSetIsOpen, "i am from payment method check");
+    // console.log("externalIsOpen",externalIsOpen, "externalSetIsOpen",externalSetIsOpen, "i am from payment method check");
 
   const isControlled = externalIsOpen !== undefined && externalSetIsOpen !== undefined;
   const isOpen = isControlled ? externalIsOpen : internalIsOpen;
@@ -38,14 +38,12 @@ export function PaymentMethodCheck({
 
   const handleAddPaymentMethod = async () => {
     try {
-      const response = await supabase.functions.invoke(
+      const response = await supabase.functions.invoke( 
         "create-checkout-session",
         {
           body: { featureType: "setup_intent" },
         }
       );
-
-      console.log("response", response);
 
       if (response.error) throw response.error; 
       if (!response.data?.url) throw new Error("No checkout URL received");

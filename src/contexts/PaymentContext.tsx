@@ -1,5 +1,8 @@
+import { supabase } from "@/integrations/supabase/client";
 import React, { createContext, useContext, useState } from "react";
 import { toast } from "sonner";
+import { loadStripe } from "@stripe/stripe-js";
+
 
 // interface CardDetails {
 //   lastFour: string;
@@ -20,51 +23,46 @@ export const PaymentProvider = ({ children }: { children: React.ReactNode }) => 
   // const [savedCard, setSavedCard] = useState<CardDetails | null>(null);
 
 
-  // const processPayment = async (amount: number, description: string): Promise<boolean> => {
-
-  //   // if (!savedCard) {
-  //   //   toast.error("Please add a payment method in billing settings");
-  //   //   return false;
-  //   // }
-  //   console.log("This is the amount -------------------------------",amount)
-  //   try {
-  //     // Simulated payment processing
-  //     await new Promise(resolve => setTimeout(resolve, 1000));
-  //     toast.success(`Payment of $${amount} processed successfully`);
-  //     return true;
-  //   } catch (error) {
-  //     toast.error("Payment failed. Please try again.");
-  //     return false;
-  //   }
-
-  // };
- 
   const processPayment = async (amount: number, description: string): Promise<boolean> => {
     try {
-      // Here, you'd call your backend to create the Stripe checkout session
-      const response = await fetch("/api/create-stripe-session", {
-        method: "POST",
-        body: JSON.stringify({
-          amount,
-          description,
-        }),
+      // Step 1: Request a Payment Intent from the backend
+      const response = await supabase.functions.invoke("create-payment-intent", {
+        body: { amount, currency: "usd", description },
       });
   
-      const session = await response.json();
+      if (response.error) throw response.error;
+      const { client_secret } = response.data;
   
-      if (session.error) {
-        throw new Error(session.error);
+      if (!client_secret) {
+        throw new Error("No client secret received");
       }
   
-      // Redirect to the Stripe checkout page
-      window.location.href = session.url; // This will send the user to Stripe's checkout page
-      return true;
+      // Step 2: Confirm the Payment on the frontend
+      const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+      if (!stripe) throw new Error("Stripe failed to initialize");
+  
+      const { error, paymentIntent } = await stripe.confirmCardPayment(client_secret);
+  
+      if (error) {
+        toast.error(error.message || "Payment failed. Please try again.");
+        return false;
+      }
+  
+      if (paymentIntent.status === "succeeded") {
+        toast.success(`Payment of $${amount} processed successfully`);
+        return true;
+      } else {
+        toast.error("Payment processing failed.");
+        return false;
+      }
     } catch (error) {
+      console.error("Payment failed:", error);
       toast.error("Payment failed. Please try again.");
       return false;
     }
   };
   
+ 
   return (
     <PaymentContext.Provider value={{ processPayment }}>
       {children}
@@ -79,3 +77,6 @@ export const usePayment = () => {
   }
   return context;
 };
+
+
+// Remove the custom loadStripe function

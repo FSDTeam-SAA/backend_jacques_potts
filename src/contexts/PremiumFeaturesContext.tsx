@@ -19,11 +19,15 @@ export const PremiumFeaturesProvider = ({ children }: { children: React.ReactNod
   const [features, setFeatures] = useState<PremiumFeature[]>([]);
   const [isVerified, setIsVerified] = useState(false);
 
+  console.log(user.id)
+
+
+
   const refreshFeatures = async () => {
     if (!user) return;
-    console.log("User ID===================================:", user.id);  // Log the user ID to ensure it's correct
 
     try {
+      console.log("Entering to refresh features");
       const { data: profile } = await supabase
         .from("profiles")
         .select("is_verified")
@@ -31,7 +35,6 @@ export const PremiumFeaturesProvider = ({ children }: { children: React.ReactNod
         .single();
 
       setIsVerified(profile?.is_verified || false);
-      console.log("Is_verified=========================================",profile?.is_verified);  // Log the verification status
 
       const { data: activeFeatures, error } = await supabase
   .from("premium_feature_usage")
@@ -40,17 +43,12 @@ export const PremiumFeaturesProvider = ({ children }: { children: React.ReactNod
   .eq("payment_status", "completed")
   .gte("expires_at", new Date().toISOString());
 
-if (error) {
-  console.error("Error retrieving active features:======================", error);
-} else {
-  console.log("Active Features Data:==================================", activeFeatures);
-}
 
       const formattedFeatures: PremiumFeature[] = [
-        "dynamic_filters",
-        "priority_message",
-        "loi_submission",
-        "verification",
+        "dynamic_filters",//done
+        "priority_message",//done
+        "loi_submission",//done
+        "verification",//done
         "featured_listing",
         "priority_listing"
       ].map((type) => ({
@@ -97,7 +95,7 @@ if (error) {
         user_id: user.id,
         feature_type: type,
         payment_status: "completed",
-        payment_amount: type === "verification" ? 25 : type === "loi_submission" ? 20 : 1,
+        payment_amount: type === "verification" ? 100 : type === "loi_submission" ? 20 :type === "priority_listing" ? 2 : 1,
         expires_at: expiresAt,
       });
 
@@ -114,6 +112,7 @@ if (error) {
   };
 
   useEffect(() => {
+    console.log("Running useEffect");
     if (user) {
       refreshFeatures();
     }
